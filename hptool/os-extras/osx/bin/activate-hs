@@ -277,17 +277,26 @@ if [ -d "$hpRoot" ] ; then
 fi
 
 ###
-### Set up /usr
+### Set up /usr or /usr/local (for 10.11)
 ###
 
-symLinkInto $ghcRoot/usr/bin/* /usr/bin
-symLinkInto $ghcRoot/usr/share/man/man1/* /usr/share/man/man1
-symLinkInto $ghcRoot/usr/share/doc/ghc /usr/share/doc
+if [ $(sw_vers -productVersion)  = "10.11" ]; then
+	symLinkInto $ghcRoot/usr/bin/* /usr/local/bin
+	symLinkInto $ghcRoot/usr/share/man/man1/* /usr/local/share/man/man1
+	symLinkInto $ghcRoot/usr/share/doc/ghc /usr/local/share/doc
 
-if [ -d "$hpRoot" ] ; then
-    symLinkInto $hpRoot/bin/* /usr/bin
+	if [ -d "$hpRoot" ] ; then
+    		symLinkInto $hpRoot/bin/* /usr/local/bin
+	fi
+else
+	symLinkInto $ghcRoot/usr/bin/* /usr/bin
+	symLinkInto $ghcRoot/usr/share/man/man1/* /usr/share/man/man1
+	symLinkInto $ghcRoot/usr/share/doc/ghc /usr/share/doc
+
+	if [ -d "$hpRoot" ]; then
+		symLinkInto $hpRoot/bin/* /usr/bin
+	fi
 fi
-
 
 ###
 ### Patch settings file
